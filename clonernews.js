@@ -81,9 +81,9 @@ function createItem(items, id) {
   let comment = document.createElement("a");
   comment.ids = 'comment'
   comment.onclick = () => handleComment(id);
-  if (items.kids){
+  if (items.kids) {
     comment.innerHTML = "Comment " + "(" + items.kids.length + ")"
-  }else{
+  } else {
     comment.innerHTML = "Comment (0)"
   }
   comment.style.cursor = "pointer"
@@ -110,41 +110,56 @@ async function getData(url) {
 
 
 
-/*********************************/
+/****************  handle button  *****************/
 
 
 
-document.getElementById("ask-job").addEventListener("click", function () {
+
+const debouncedAskJob = debounce(function () {
   start = 0;
   end = 10;
   Url = "https://hacker-news.firebaseio.com/v0/askstories.json?print=pretty"
   fetchData(Url)
-});
+}, 1000);
 
 
 
-
-document.getElementById("TopStories").addEventListener("click", function () {
+const debouncedTopStories = debounce(function () {
   start = 0;
   end = 10;
   Url = "https://hacker-news.firebaseio.com/v0/topstories.json?print=pretty"
   fetchData(Url)
-});
+}, 1000);
 
-
-
-document.getElementById("next-button").addEventListener("click", function () {
+const debouncedNext = debounce(function () {
   if (end < totalItems) {
     start += 10;
     end += 10;
-    fetchData(Url)
+    fetchData(Url);
   }
-});
+}, 1000);
 
-document.getElementById("prev-button").addEventListener("click", function () {
+const debouncedPrev = debounce(function () {
   if (start > 0) {
     start -= 10;
     end -= 10;
-    fetchData(Url)
+    fetchData(Url);
   }
-});
+}, 1000);
+
+document.getElementById("TopStories").addEventListener("click", debouncedAskJob);
+document.getElementById("TopStories").addEventListener("click", debouncedTopStories);
+document.getElementById("next-button").addEventListener("click", debouncedNext);
+document.getElementById("prev-button").addEventListener("click", debouncedPrev);
+
+
+
+// Debounce function implementation
+function debounce(func, delay) {
+  let timeout; // Store the timeout ID
+  return function (...args) {
+    const context = this; // Capture the context in case it's needed
+    clearTimeout(timeout); // Clear the previous timeout
+    timeout = setTimeout(() => func.apply(context, args), delay); // Set a new timeout
+  };
+}
