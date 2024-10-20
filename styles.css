@@ -96,7 +96,10 @@ header {
     color: #333;
     margin-top: 10px;
 }
-
+.subDiv{
+  display: flex;
+  justify-content: space-between;
+}
 
 /* URL (Link) */
 .url {

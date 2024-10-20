@@ -1,10 +1,10 @@
 let start = 0;
 let end = 10;
 var totalItems = 500; // Variable to keep track of total items fetched
-let Url = "https://hacker-news.firebaseio.com/v0/topstories.json?print=pretty"
+let Url = "https://hacker-news.firebaseio.com/v0/newstories.json?print=pretty"
 let max = 0
 let updatesNum = 0
-fetchData("https://hacker-news.firebaseio.com/v0/topstories.json?print=pretty")
+fetchData("https://hacker-news.firebaseio.com/v0/newstories.json?print=pretty")
 
 getMax()
 
@@ -89,7 +89,7 @@ function createItem(items, id) {
   if (items.url) {
     let url = document.createElement("a");
     url.className = "url";
-    url.textContent = items.url; // The text that will be displayed
+    url.textContent = 'Read More...'; // The text that will be displayed
     url.href = items.url; // The actual link
     url.target = "_blank";
     New.appendChild(url);
@@ -101,23 +101,47 @@ function createItem(items, id) {
     New.appendChild(text)
   }
 
+  let subDiv = document.createElement("div");
+
   let score = document.createElement("div");
   score.className = "score";
   score.textContent = "Score (" + items.score + ")";
-  New.appendChild(score)
 
 
-  let comment = document.createElement("a");
-  comment.ids = 'comment'
-  comment.onclick = () => handleComment(id);
-  if (items.kids) {
-    comment.innerHTML = "Comment " + "(" + items.kids.length + ")"
+  subDiv.appendChild(score)
+  subDiv.className = "subDiv"
+
+  let type = document.createElement("div");
+  type.className = "type";
+  if (items.url) {
+    type.textContent = items.type
   } else {
-    comment.innerHTML = "Comment (0)"
+    if (items.type === 'story') {
+      type.textContent = 'ask'
+    } else {
+      type.textContent = items.type
+    }
   }
-  comment.style.cursor = "pointer"
-  comment.style.color = "blue"
-  New.appendChild(comment)
+  subDiv.appendChild(type)
+
+  if (typeof items.kids != 'undefined') {
+    let comment = document.createElement("a");
+    comment.ids = 'comment'
+    comment.onclick = () => handleComment(id);
+    if (items.kids) {
+      comment.innerHTML = "Comment " + "(" + items.kids.length + ")"
+    } else {
+      comment.innerHTML = "Comment (0)"
+    }
+    comment.style.cursor = "pointer"
+    comment.style.color = "blue"
+    subDiv.appendChild(comment)
+  }
+
+
+
+  New.appendChild(subDiv)
+
 
   return New
 }
@@ -147,7 +171,7 @@ async function getData(url) {
 const debouncedAskJob = debounce(function () {
   start = 0;
   end = 10;
-  Url = "https://hacker-news.firebaseio.com/v0/askstories.json?print=pretty"
+  Url = "https://hacker-news.firebaseio.com/v0/jobstories.json?print=pretty"
   fetchData(Url)
 }, 1000);
 
@@ -156,7 +180,7 @@ const debouncedAskJob = debounce(function () {
 const debouncedTopStories = debounce(function () {
   start = 0;
   end = 10;
-  Url = "https://hacker-news.firebaseio.com/v0/topstories.json?print=pretty"
+  Url = "https://hacker-news.firebaseio.com/v0/newstories.json?print=pretty"
   fetchData(Url)
 }, 1000);
 
@@ -176,8 +200,8 @@ const debouncedPrev = debounce(function () {
   }
 }, 1000);
 
-document.getElementById("ask-job").addEventListener("click", debouncedAskJob);
-document.getElementById("TopStories").addEventListener("click", debouncedTopStories);
+document.getElementById("job").addEventListener("click", debouncedAskJob);
+document.getElementById("NewStories").addEventListener("click", debouncedTopStories);
 document.getElementById("next-button").addEventListener("click", debouncedNext);
 document.getElementById("prev-button").addEventListener("click", debouncedPrev);
 
