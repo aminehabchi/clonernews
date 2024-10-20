@@ -1,73 +1,97 @@
 let start = 0;
 let end = 10;
-let totalItems = 0; // Variable to keep track of total items fetched
+var totalItems = 500; // Variable to keep track of total items fetched
+let Url = "https://hacker-news.firebaseio.com/v0/topstories.json?print=pretty"
 
 
-// Initial load
-main();
-
-async function main() {
-  try {
-    const topItems = await fetchData(); // Await the async call to fetchData
-    const container = document.getElementById("items-container");
-    //container.innerHTML = ''; // Clear previous items
-
-    for (let i = start; i < end; i++) {
-      if (topItems[i]) { // Check if the item is not null
-        let New = document.createElement("div");
-        New.className = "new";
-
-        let title = document.createElement("div");
-        title.className = "title";
-        title.textContent = topItems[i].title;
-        New.appendChild(title);
-
-        let author = document.createElement("div");
-        author.className = "author";
-        author.textContent = topItems[i].by;
-        New.appendChild(author);
-
-        let time = document.createElement("div");
-        time.className = "time";
-        time.textContent = new Date(topItems[i].time * 1000).toLocaleString();
-        New.appendChild(time);
-
-        let url = document.createElement("a");
-        url.className = "url";
-        url.textContent = topItems[i].url; // The text that will be displayed
-        url.href = topItems[i].url; // The actual link
-        url.target = "_blank";
-        New.appendChild(url);
-
-        document.body.appendChild(New);
-      }
-    }
-
-    // Update totalItems for pagination limits
-    totalItems = await getData("https://hacker-news.firebaseio.com/v0/topstories.json?print=pretty");
-    
-    // Enable or disable buttons based on pagination
-    document.getElementById("next-button").disabled = end >= totalItems.length;
-    document.getElementById("prev-button").disabled = start === 0;
-
-  } catch (error) {
-    console.error("Error in fetching data:", error);
-  }
-}
+fetchData("https://hacker-news.firebaseio.com/v0/topstories.json?print=pretty")
 
 
-
-async function fetchData() {
-  let DATA = [];
-  const ids = await getData("https://hacker-news.firebaseio.com/v0/topstories.json?print=pretty");
-
+async function fetchData(url) {
+  const ids = await getData(url);
+  totalItems = ids.length
+  let container = document.getElementById("items-container")
+  container.innerHTML = ''
   for (let i = start; i < end && i < ids.length; i++) {
-    let items = await getData("https://hacker-news.firebaseio.com/v0/item/" + ids[i] + ".json?print=pretty");
-    DATA.push(items);
+    let item = await getData("https://hacker-news.firebaseio.com/v0/item/" + ids[i] + ".json?print=pretty");
+    if (item) { // Check if the item is not null
+      let New = createItem(item, ids[i], false)
+      container.appendChild(New)
+    }
   }
-  return DATA;
 }
 
+async function handleComment(postIds) {
+  let obj = await getData("https://hacker-news.firebaseio.com/v0/item/" + postIds + ".json?print=pretty");
+  let item = createItem(obj, postIds, false)
+  let kidsId = obj.kids
+  let container = document.getElementById("items-container")
+  container.innerHTML = ''
+  container.appendChild(item)
+  if (kidsId) {
+    for (let i = 0; i < kidsId.length; i++) {
+      let CommentObj = await getData("https://hacker-news.firebaseio.com/v0/item/" + kidsId[i] + ".json?print=pretty");
+      let Comment = createItem(CommentObj, kidsId[i], true)
+      container.appendChild(Comment)
+    }
+  }
+
+}
+
+function createItem(items, id) {
+
+  let New = document.createElement("div");
+  New.className = "new";
+
+  let title = document.createElement("div");
+  title.className = "title";
+  title.textContent = items.title;
+  New.appendChild(title);
+
+  let author = document.createElement("div");
+  author.className = "author";
+  author.textContent = items.by;
+  New.appendChild(author);
+
+  let time = document.createElement("div");
+  time.className = "time";
+  time.textContent = new Date(items.time * 1000).toLocaleString();
+  New.appendChild(time);
+
+  if (items.url) {
+    let url = document.createElement("a");
+    url.className = "url";
+    url.textContent = items.url; // The text that will be displayed
+    url.href = items.url; // The actual link
+    url.target = "_blank";
+    New.appendChild(url);
+  } else {
+    let text = document.createElement("div");
+    text.className = "text"
+    text.innerHTML = items.text
+    New.appendChild(text)
+  }
+
+  let score = document.createElement("div");
+  score.className = "score";
+  score.textContent = items.score;
+  New.appendChild(score)
+
+
+  let comment = document.createElement("a");
+  comment.ids = 'comment'
+  comment.onclick = () => handleComment(id);
+  if (items.kids){
+    comment.innerHTML = "Comment " + "(" + items.kids.length + ")"
+  }else{
+    comment.innerHTML = "Comment (0)"
+  }
+  comment.style.cursor = "pointer"
+  comment.style.color = "blue"
+  New.appendChild(comment)
+
+  return New
+}
 
 
 async function getData(url) {
@@ -85,22 +109,42 @@ async function getData(url) {
 }
 
 
+
 /*********************************/
 
 
 
-// document.getElementById("next-button").addEventListener("click", function () {
-//   if (end < totalItems) { // Check if there's more data to fetch
-//     start += 10;
-//     end += 10;
-//     main();
-//   }
-// });
+document.getElementById("ask-job").addEventListener("click", function () {
+  start = 0;
+  end = 10;
+  Url = "https://hacker-news.firebaseio.com/v0/askstories.json?print=pretty"
+  fetchData(Url)
+});
 
-// document.getElementById("prev-button").addEventListener("click", function () {
-//   if (start > 0) { // Prevent going below zero
-//     start -= 10;
-//     end -= 10;
-//     main();
-//   }
-// });
+
+
+
+document.getElementById("TopStories").addEventListener("click", function () {
+  start = 0;
+  end = 10;
+  Url = "https://hacker-news.firebaseio.com/v0/topstories.json?print=pretty"
+  fetchData(Url)
+});
+
+
+
+document.getElementById("next-button").addEventListener("click", function () {
+  if (end < totalItems) {
+    start += 10;
+    end += 10;
+    fetchData(Url)
+  }
+});
+
+document.getElementById("prev-button").addEventListener("click", function () {
+  if (start > 0) {
+    start -= 10;
+    end -= 10;
+    fetchData(Url)
+  }
+});

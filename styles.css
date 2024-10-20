@@ -1,112 +1,121 @@
-/* General container for each news item */
-.new {
-    border: 1px solid #ddd;
-    padding: 15px;
-    margin: 10px 0;
+/* Header styling */
+header {
+    display: flex;
+    justify-content: space-between; /* Center the buttons horizontally */
+    gap: 20px; /* Space between buttons */
+    padding: 20px;
+    background-color: #f0f0f0;
+    border-bottom: 2px solid #e0e0e0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Button styling */
+  header button {
+    padding: 10px 20px;
+    font-size: 1em;
+    font-weight: bold;
+    color: #ffffff;
+    background-color: #007bff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  header button:hover {
+    background-color: #0056b3;
+  }
+  
+  header button:active {
+    background-color: #004085;
+  }
+  
+  header button:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px #0056b3;
+  }
+  
+
+/*******************************************************************************/
+
+
+
+/* Container styling */
+#items-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    /* Space between items */
+    padding: 20px;
+    max-width: 800px;
+    margin: 0 auto;
     background-color: #f9f9f9;
     border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* Styling for the title */
+
+/* Each item */
+.new {
+    padding: 15px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    background-color: #ffffff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+
+/* Title */
 .title {
     font-size: 1.5em;
     font-weight: bold;
-    margin-bottom: 10px;
     color: #333;
+    margin-bottom: 10px;
 }
 
-/* Styling for the author */
+
+/* Author */
 .author {
-    font-size: 1.1em;
-    color: #666;
-    margin-bottom: 5px;
+    font-size: 1em;
+    color: #555;
+    margin-bottom: 8px;
 }
 
-/* Styling for the time */
+
+/* Time */
 .time {
     font-size: 0.9em;
-    color: #999;
+    color: #888;
     margin-bottom: 10px;
 }
 
-/* Styling for the URL */
-.url {
-    font-size: 1.1em;
-    color: #0066cc;
-    text-decoration: none;
-    word-break: break-all;
-    /* To prevent long URLs from overflowing */
+/* Score */
+.score {
+    font-size: 1em;
+    font-weight: bold;
+    color: #333;
+    margin-top: 10px;
 }
 
-/* Hover effect for URL */
+
+/* URL (Link) */
+.url {
+    display: inline-block;
+    font-size: 1em;
+    color: #0066cc;
+    text-decoration: none;
+    margin-bottom: 10px;
+}
+
+
 .url:hover {
     text-decoration: underline;
 }
 
-/* Adding some responsiveness */
-@media (max-width: 600px) {
-    .new {
-        padding: 10px;
-    }
 
-    .title {
-        font-size: 1.2em;
-    }
-
-    .author,
-    .time,
-    .url {
-        font-size: 0.9em;
-    }
-}
-
-/**************************************/
-
-
-
-header {
-    background-color: #333;
-    /* Dark background for the header */
-    color: #fff;
-    /* White text color */
-    padding: 15px 20px;
-    /* Padding around the header */
-    display: flex;
-    /* Use flexbox for layout */
-    justify-content: space-between;
-    /* Center the buttons horizontally */
-    gap: 20px;
-    /* Space between buttons */
-}
-
-button {
-    padding: 10px 20px;
-    /* Padding for buttons */
-    border: none;
-    /* Remove default border */
-    border-radius: 5px;
-    /* Rounded corners */
-    background-color: #007BFF;
-    /* Blue background */
-    color: #fff;
-    /* White text color */
-    font-size: 16px;
-    /* Font size */
-    cursor: pointer;
-    /* Pointer cursor on hover */
-    transition: background-color 0.3s;
-    /* Smooth transition for hover effect */
-}
-
-button:hover {
-    background-color: #0056b3;
-    /* Darker blue on hover */
-}
-
-button:focus {
-    outline: none;
-    /* Remove outline on focus */
-    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.5);
-    /* Add a focus ring */
+/* Text (if URL is not available) */
+.text {
+    font-size: 1em;
+    color: #666;
+    margin-bottom: 10px;
 }
