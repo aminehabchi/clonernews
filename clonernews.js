@@ -10,7 +10,6 @@ getMax()
 
 
 async function getMax() {
-
   let newMax = await getData("https://hacker-news.firebaseio.com/v0/maxitem.json?print=pretty")
 
   if (max != 0 && newMax != max) {
@@ -200,11 +199,53 @@ const debouncedPrev = debounce(function () {
   }
 }, 1000);
 
+const debouncedPoll = debounce(async function () {
+  let idPalls = [41881367, 41852211, 41741393, 41717934, 41610428, 41603177, 41550697, 41483187, 41314418, 41106263, 41062175, 41045565, 41010066, 40861796, 40854152, 40775332, 40689515, 40685752, 40418682, 40336656]
+
+  let container = document.getElementById("items-container")
+
+  container.innerHTML = ''
+
+  for (let i = 0; i < idPalls.length; i++) {
+
+    let item = await getData("https://hacker-news.firebaseio.com/v0/item/" + idPalls[i] + ".json?print=pretty");
+
+    let New = document.createElement("div");
+    New.className = "new";
+
+    let title = document.createElement('div')
+    title.textContent = item.title
+    title.style.color = "blue"
+    New.appendChild(title)
+
+    if (typeof item.text != 'undefined') {
+      let text = document.createElement('div')
+      text.innerHTML = item.text
+      New.appendChild(text)
+    }
+
+
+    let pllp = document.createElement('div')
+    for (let j = 0; j < item.parts.length; j++) {
+      let pollopt = await getData("https://hacker-news.firebaseio.com/v0/item/" + item.parts[j] + ".json?print=pretty");
+      let title1 = document.createElement('div')
+      title1.textContent = "*" + pollopt.text
+      pllp.appendChild(title1)
+    }
+    New.appendChild(pllp)
+
+
+    container.appendChild(New)
+  }
+
+
+}, 1000);
+
 document.getElementById("job").addEventListener("click", debouncedAskJob);
 document.getElementById("NewStories").addEventListener("click", debouncedTopStories);
 document.getElementById("next-button").addEventListener("click", debouncedNext);
 document.getElementById("prev-button").addEventListener("click", debouncedPrev);
-
+document.getElementById("Poll").addEventListener("click", debouncedPoll);
 
 
 // Debounce function implementation
