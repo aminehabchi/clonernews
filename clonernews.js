@@ -2,9 +2,16 @@ let start = 0;
 let end = 10;
 var totalItems = 500; // Variable to keep track of total items fetched
 let Url = "https://hacker-news.firebaseio.com/v0/topstories.json?print=pretty"
-
+let max=0
 
 fetchData("https://hacker-news.firebaseio.com/v0/topstories.json?print=pretty")
+
+getMax()
+async function getMax(){
+  let newMax=await getData("https://hacker-news.firebaseio.com/v0/maxitem.json?print=pretty")
+
+  console.log(newMax);
+}
 
 
 async function fetchData(url) {
@@ -65,7 +72,8 @@ function createItem(items, id) {
     url.href = items.url; // The actual link
     url.target = "_blank";
     New.appendChild(url);
-  } else {
+  } 
+  if (items.text) {
     let text = document.createElement("div");
     text.className = "text"
     text.innerHTML = items.text
@@ -74,7 +82,7 @@ function createItem(items, id) {
 
   let score = document.createElement("div");
   score.className = "score";
-  score.textContent = items.score;
+  score.textContent = "Score ("+ items.score+")";
   New.appendChild(score)
 
 
@@ -120,7 +128,7 @@ const debouncedAskJob = debounce(function () {
   end = 10;
   Url = "https://hacker-news.firebaseio.com/v0/askstories.json?print=pretty"
   fetchData(Url)
-}, 1000);
+}, 100);
 
 
 
@@ -129,7 +137,7 @@ const debouncedTopStories = debounce(function () {
   end = 10;
   Url = "https://hacker-news.firebaseio.com/v0/topstories.json?print=pretty"
   fetchData(Url)
-}, 1000);
+}, 100);
 
 const debouncedNext = debounce(function () {
   if (end < totalItems) {
@@ -137,7 +145,7 @@ const debouncedNext = debounce(function () {
     end += 10;
     fetchData(Url);
   }
-}, 1000);
+}, 100);
 
 const debouncedPrev = debounce(function () {
   if (start > 0) {
@@ -145,9 +153,9 @@ const debouncedPrev = debounce(function () {
     end -= 10;
     fetchData(Url);
   }
-}, 1000);
+}, 100);
 
-document.getElementById("TopStories").addEventListener("click", debouncedAskJob);
+document.getElementById("ask-job").addEventListener("click", debouncedAskJob);
 document.getElementById("TopStories").addEventListener("click", debouncedTopStories);
 document.getElementById("next-button").addEventListener("click", debouncedNext);
 document.getElementById("prev-button").addEventListener("click", debouncedPrev);
